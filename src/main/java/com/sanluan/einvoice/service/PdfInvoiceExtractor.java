@@ -41,6 +41,10 @@ public class PdfInvoiceExtractor {
         {
             String reg = "机器编号:(?<machineNumber>\\d{12})|发票代码:(?<code>\\d{12})|发票号码:(?<number>\\d{8})|:(?<date>\\d{4}年\\d{2}月\\d{2}日)"
                     + "|校验码:(?<checksum>\\d{20}|\\S{4,})";
+            if(allText.contains("电子发票(普通发票)")){
+                reg = "机器编号:(?<machineNumber>\\d{12})|发票代码:(?<code>\\d{12})|发票号码:(?<number>\\d{20})|:(?<date>\\d{4}年\\d{2}月\\d{2}日)"
+                        + "|校验码:(?<checksum>\\d{20}|\\S{4,})";
+            }
             Pattern pattern = Pattern.compile(reg);
             Matcher matcher = pattern.matcher(allText);
             while (matcher.find()) {

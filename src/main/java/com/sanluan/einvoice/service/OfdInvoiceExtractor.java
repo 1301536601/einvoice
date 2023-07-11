@@ -14,6 +14,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 
 /**
@@ -77,17 +78,38 @@ public class OfdInvoiceExtractor {
             List<Detail> detailList = new ArrayList<>();
             List<Element> elements = details.elements();
             for (Element element : elements) {
-                Detail detail = new Detail();
-                detail.setName(element.elementTextTrim("Item"));
-                detail.setAmount(new BigDecimal(element.elementTextTrim("Amount")));
-                detail.setTaxAmount(new BigDecimal(element.elementTextTrim("TaxAmount")));
-                detail.setCount(new BigDecimal(element.elementTextTrim("Quantity")));
-                detail.setPrice(new BigDecimal(element.elementTextTrim("Price")));
-                detail.setUnit(element.elementTextTrim("MeasurementDimension"));
-                detail.setModel(element.elementTextTrim("Specification"));
-                detail.setTaxRate(
-                        new BigDecimal(element.elementTextTrim("TaxScheme").replace("%", "")).divide(new BigDecimal(100)));
-                detailList.add(detail);
+                try {
+                    Detail detail = new Detail();
+                    if(!ObjectUtils.isEmpty(element.elementTextTrim("Item"))){
+                        detail.setName(element.elementTextTrim("Item"));
+                    }
+                    if(!ObjectUtils.isEmpty(element.elementTextTrim("Amount"))){
+                        detail.setAmount(new BigDecimal(element.elementTextTrim("Amount")));
+                    }
+                    if(!ObjectUtils.isEmpty(element.elementTextTrim("TaxAmount"))){
+                        detail.setTaxAmount(new BigDecimal(element.elementTextTrim("TaxAmount")));
+                    }
+                    if(!ObjectUtils.isEmpty(element.elementTextTrim("Quantity"))){
+                        detail.setCount(new BigDecimal(element.elementTextTrim("Quantity")));
+                    }
+                    if(!ObjectUtils.isEmpty(element.elementTextTrim("Price"))){
+                        detail.setPrice(new BigDecimal(element.elementTextTrim("Price")));
+                    }
+                    if(!ObjectUtils.isEmpty(element.elementTextTrim("MeasurementDimension"))){
+                        detail.setUnit(element.elementTextTrim("MeasurementDimension"));
+                    }
+                    if(!ObjectUtils.isEmpty(element.elementTextTrim("Specification"))){
+                        detail.setModel(element.elementTextTrim("Specification"));
+                    }
+                    if(!ObjectUtils.isEmpty(element.elementTextTrim("TaxScheme"))){
+                        detail.setTaxRate(
+                                new BigDecimal(element.elementTextTrim("TaxScheme").replace("%", "")).divide(new BigDecimal(100)));
+                    }
+                    detailList.add(detail);
+                } catch (Exception e) {
+                    System.out.println(e);
+                    continue;
+                }
             }
             invoice.setDetailList(detailList);
         }
